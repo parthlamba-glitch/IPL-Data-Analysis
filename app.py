@@ -246,19 +246,19 @@ if page == "🏠 Overview":
           - Season Trends
             """)
 
-#Block 4
+#BLOCK 4
 # =====================================================
 # MATCH ANALYSIS
 # =====================================================
-elif page == "🏟️ Match Analysis":
 
+elif page == "🏟️ Match Analysis":
+    valid = filtered_matches[filtered_matches['winner'].notna()].copy()
     st.title("🏟️ Match Analysis")
 
     analysis = st.selectbox(
         "Select Analysis",
         [
             "Team Wins",
-            "Toss Analysis",
             "Toss by Venue",
             "Win Margin Distribution",
             "Player of the Match"
@@ -292,38 +292,6 @@ elif page == "🏟️ Match Analysis":
         st.pyplot(fig)
 
 #Option 2
-    elif analysis == "Toss Analysis":
-
-        toss_pct = (
-            (filtered_matches["toss_winner"] == filtered_matches["winner"])
-            .mean() * 100
-        )
-
-        st.metric(
-            "Toss Winner Also Won the Match",
-            f"{toss_pct:.1f}%"
-        )
-
-        decision = (
-            filtered_matches
-            .groupby("toss_decision")
-            .size()
-        )
-
-        fig, ax = plt.subplots(figsize=(6,5))
-
-        ax.pie(
-            decision.values,
-            labels=decision.index,
-            autopct="%1.1f%%",
-            startangle=90
-        )
-
-        ax.axis("equal")
-
-        st.pyplot(fig)
-
-#Option 3
     elif analysis == "Toss by Venue":
         valid = filtered_matches[filtered_matches['winner'].notna()].copy()
         valid['toss_won_match'] = valid['toss_winner'] == valid['winner']
@@ -339,7 +307,6 @@ elif page == "🏟️ Match Analysis":
         .loc[top_venues]
         )
 
-        plt.figure(figsize=(10, 8))
         fig, ax = plt.subplots(figsize=(10, 8))
         sns.heatmap(venue_toss, annot=True, fmt='.1f',
                     cmap='RdYlGn', center=50, vmin=30, vmax=70,
@@ -347,4 +314,53 @@ elif page == "🏟️ Match Analysis":
         ax.set_title("Match Win Percentage After Winning the Toss\nby Venue and Toss Decision")
         ax.set_xlabel("Toss Decision")
         ax.set_ylabel("Venue")
+        st.pyplot(fig)
+
+#Option 3
+    elif analysis == "Win Margin Distribution":
+
+        st.subheader("Win Margin Distribution")
+
+        runs_wins = filtered_matches[
+            filtered_matches['result'] == 'runs'
+            ]['result_margin']
+
+        wicket_wins = filtered_matches[
+            filtered_matches['result'] == 'wickets'
+            ]['result_margin']
+
+        fig, axes = plt.subplots(1, 2, figsize=(14, 5))
+
+        axes[0].hist(runs_wins, bins=20, color='steelblue', edgecolor='white')
+        axes[0].set_title('Wins by Runs')
+        axes[0].set_xlabel('Runs')
+
+        axes[1].hist(wicket_wins, bins=10, color='coral', edgecolor='white')
+        axes[1].set_title('Wins by Wickets')
+        axes[1].set_xlabel('Wickets')
+
+        plt.tight_layout()
+
+        st.pyplot(fig)
+
+        top5 = (
+            filtered_matches
+            .nlargest(5, 'result_margin')[
+                ['season', 'team1', 'team2', 'winner', 'result', 'result_margin']
+            ]
+        )
+
+        st.subheader("Top 5 Largest Victory Margins")
+        st.dataframe(top5, use_container_width=True)
+
+    #Option 4
+    elif analysis == "Player of the Match":
+        potm = valid['player_of_match'].value_counts().head(20)
+        fig, ax = plt.subplots(figsize=(10, 8))
+        ax = sns.barplot(x=potm.values, y=potm.index, palette='magma', hue=potm.index, legend=False)
+        for container in ax.containers:
+            ax.bar_label(container, fontsize=10, padding = 2)
+        ax.set_title('Most Player of the Match Awards (All Time)')
+        ax.set_xlabel('Awards')
+        plt.tight_layout()
         st.pyplot(fig)
