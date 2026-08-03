@@ -131,11 +131,15 @@ if selected_team != "All":
         (filtered_merged["bowling_team"] == selected_team)
     ]
 
-filtered_matches
+with st.expander("🔧 Debug: View Filtered Data"):
+    st.write("Filtered Matches")
+    st.dataframe(filtered_matches)
 
-filtered_deliveries
+    st.write("Filtered Deliveries")
+    st.dataframe(filtered_deliveries)
 
-filtered_merged
+    st.write("Filtered Merged Data")
+    st.dataframe(filtered_merged)
 
 #Block 3
 # =====================================================
@@ -362,5 +366,135 @@ elif page == "🏟️ Match Analysis":
             ax.bar_label(container, fontsize=10, padding = 2)
         ax.set_title('Most Player of the Match Awards (All Time)')
         ax.set_xlabel('Awards')
+        plt.tight_layout()
+        st.pyplot(fig)
+
+#Block 5
+# =====================================================
+# BATTING ANALYSIS
+# =====================================================
+
+elif page == "🏏 Batting Analysis":
+
+    st.title("🏏 Batting Analysis")
+
+    analysis = st.selectbox(
+        "Select Analysis",
+        [
+            "Top Run Scorers",
+            "Strike Rate Leaders",
+            "Death Over Specialists",
+            "Batting Consistency"
+        ]
+    )
+
+    st.divider()
+
+    runs = deliveries.groupby('batter')['batsman_runs'].sum().sort_values(ascending=False).head(10)
+    #Top run scorers
+    if analysis == "Top Run Scorers":
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax = sns.barplot(x=runs.values, y=runs.index, palette='viridis', hue=runs.index, legend=False)
+        for container in ax.containers:
+            ax.bar_label(container, fontsize=11, padding=4)
+        ax.set_title(
+            "Top 10 IPL Run Scorers (2008–2024)",
+            fontsize=18,
+            weight='bold',
+            pad=15
+        )
+        sns.despine(left=True, bottom=True)
+        ax.set_xlabel('Total Runs')
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Strike rate leaders
+    elif analysis == "Strike Rate Leaders":
+        legal_deliveries = deliveries[deliveries['extras_type'] != 'wides']
+        balls_faced = legal_deliveries.groupby('batter')['ball'].count()
+        total_runs = deliveries.groupby('batter')['batsman_runs'].sum()
+
+        sr = (total_runs / balls_faced * 100).round(2)
+        qualified = sr[balls_faced >= 500].sort_values(ascending=False).head(10)
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        ax = sns.barplot(x=qualified.values, y=qualified.index, palette='mako', hue=qualified.index, legend=False)
+        for container in ax.containers:
+            ax.bar_label(container, fontsize=11, padding=4)
+        ax.set_title('Highest Strike Rate (Min 500 Balls Faced)')
+        ax.set_xlabel('Strike Rate')
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Death over specialists
+    elif analysis == "Death Over Specialists":
+        death_overs = deliveries[
+            (deliveries['over'] >= 16) & (deliveries['extras_type'] != 'wides')]  # overs 17-20 are index 16-19
+
+        death_runs = death_overs.groupby('batter')['batsman_runs'].sum()
+        death_balls = death_overs.groupby('batter')['ball'].count()
+        dismissal_types = ['caught', 'bowled', 'lbw', 'stumped', 'caught and bowled', 'hit wicket']
+        death_dismissals = (
+            death_overs[death_overs['dismissal_kind'].isin(dismissal_types)].groupby('player_dismissed').size())
+
+        death_avg = (death_runs / death_dismissals.replace(0, pd.NA)).round(2)
+        death_sr = (death_runs / death_balls * 100).round(2)
+
+        finishers = pd.DataFrame(
+            {'runs': death_runs, 'average': death_avg, 'strike_rate': death_sr, "balls": death_balls})
+        finishers = finishers[finishers["balls"] >= 100]
+        finishers = finishers.sort_values(["strike_rate", "runs", "average"], ascending=[False, False, False]).head(10)
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+        sns.scatterplot(
+            data=finishers,
+            x="runs",
+            y="strike_rate",
+            s=150
+        )
+        for batter in finishers.index:
+            plt.text(finishers.loc[batter, "runs"] + 5, finishers.loc[batter, "strike_rate"], batter, fontsize=8)
+
+        ax.set_title("Death-Over Runs vs Strike Rate")
+        ax.set_xlabel("Runs")
+        ax.set_ylabel("Strike Rate")
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Batting consistency
+    elif analysis == "Batting Consistency":
+        # Top 10 run scorers
+        top10_batters = runs.index
+        consistency = []
+        for player in top10_batters:
+            scores = (deliveries[deliveries['batter'] == player].groupby('match_id')['batsman_runs'].sum())
+            mean = scores.mean()
+            std = scores.std()
+            consistency.append({
+                "batter": player,
+                "innings": scores.count(),
+                "mean": round(mean, 2),
+                "std_dev": round(std, 2),
+                "cv": round(std / mean, 3)
+            })
+        consistency_df = (
+            pd.DataFrame(consistency)
+            .sort_values("cv")
+            .reset_index(drop=True)
+        )
+
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        sns.barplot(data=consistency_df, x="cv", y="batter", palette="flare", hue=consistency_df.index)
+        # Annotate CV values
+        for i, value in enumerate(consistency_df["cv"]):
+            plt.text(value + 0.01, i, f"{value:.2f}", va="center")
+
+        ax.set_xlabel("Coefficient of Variation (Lower = More Consistent)")
+        ax.set_ylabel("")
+        ax.set_title("Most Consistent IPL Batters (Top 10 Run Scorers)")
+        plt.xlim(0, consistency_df["cv"].max() + 0.1)
+
         plt.tight_layout()
         st.pyplot(fig)
