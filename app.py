@@ -498,3 +498,182 @@ elif page == "🏏 Batting Analysis":
 
         plt.tight_layout()
         st.pyplot(fig)
+
+#Block 6
+# =====================================================
+# BOWLING ANALYSIS
+# =====================================================
+elif page == "🎯 Bowling Analysis":
+    st.title("🎯 Bowling Analysis")
+
+    analysis = st.selectbox(
+        "Select Analysis",
+        [
+            "Top Wicket Takers",
+            "Economy Leaders",
+            "Dot Ball Specialists",
+            "Best Bowling Average",
+            "Dismissal Types",
+            "Powerplay vs Death Economy"
+        ]
+    )
+
+    st.divider()
+    legal_deliveries = deliveries[deliveries['extras_type'] != 'wides'] #Ignore
+    balls_bowled = (legal_deliveries.groupby('bowler').size()) #Ignore
+    non_bowler_dismissals = ['run out', 'retired hurt', 'obstructing the field', 'retired out'] #Ignore
+    wickets_data = deliveries[
+        (deliveries['is_wicket'] == 1) & (~deliveries['dismissal_kind'].isin(non_bowler_dismissals))] #Ignore
+
+    #Top wicket takers
+    if analysis == "Top Wicket Takers":
+        # Dismissals that are not credited to the bowler
+        non_bowler_dismissals = ['run out', 'retired hurt', 'obstructing the field', 'retired out']
+
+        # Filter wickets credited to the bowler
+        wickets_data = deliveries[(deliveries['is_wicket'] == 1) & (~deliveries['dismissal_kind'].isin(non_bowler_dismissals))]
+        top_wickets = (wickets_data.groupby('bowler').size().sort_values(ascending=False).head(10))
+
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        ax = sns.barplot(x=top_wickets.values, y=top_wickets.index, palette="viridis", hue=top_wickets.index)
+        for container in ax.containers:
+            ax.bar_label(container, fontsize=10, padding=2)
+
+        ax.set_title("Top 10 IPL Wicket-Takers (2008–2024)")
+        ax.set_xlabel("Wickets")
+        ax.set_ylabel("Bowler")
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Economy leaders
+    elif analysis == "Economy Leaders":
+        # Legal deliveries(excluding wides)
+        legal_deliveries = deliveries[deliveries['extras_type'] != 'wides']
+
+        # Legal balls bowled
+        balls_bowled = (legal_deliveries.groupby('bowler').size())
+
+        # Runs conceded by the bowler
+        deliveries['bowler_runs'] = deliveries['batsman_runs']
+
+        deliveries.loc[deliveries['extras_type'].isin(['wides', 'noballs']), 'bowler_runs'] \
+            += deliveries.loc[deliveries['extras_type'].isin(['wides', 'noballs']), 'extra_runs']
+
+        runs_conceded = deliveries.groupby('bowler')['bowler_runs'].sum()
+
+        # Economy
+        economy = (runs_conceded / balls_bowled * 6).round(2)
+        MIN_BALLS = 1000
+        qualified_economy = (economy[balls_bowled >= MIN_BALLS].sort_values().head(11))
+        qualified_economy = qualified_economy.drop('R Sharma', errors='ignore')  # Dropping the name R Sharma
+        # display(qualified_economy.to_frame(name="Economy"))
+
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(10, 6))
+
+        ax = sns.barplot(x=qualified_economy.values, y=qualified_economy.index, palette="rocket",
+                         hue=qualified_economy.index)
+        for container in ax.containers: \
+                ax.bar_label(container, fontsize=10, padding=2)
+
+        ax.set_title("Best Economy Rate (Minimum 1000 Legal Deliveries)")
+        ax.set_xlabel("Economy Rate (Runs per Over)")
+        ax.set_ylabel("Bowler")
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Dot ball specialists
+    elif analysis == "Dot Ball Specialists":
+        # Dot balls(legal deliveries with zero runs scored)
+        dot_balls = legal_deliveries[legal_deliveries["total_runs"] == 0]
+
+        # Dot ball count
+        dot_ball_count = dot_balls.groupby("bowler").size()
+
+        # Dot ball percentage
+        dot_ball_percentage = (dot_ball_count / balls_bowled * 100).round(2)
+
+        MIN_BALLS = 1000
+        qualified_dot_pct = (dot_ball_percentage[balls_bowled >= MIN_BALLS]
+                             .drop('R Sharma', errors='ignore').sort_values(ascending=False).head(10))
+        # display(qualified_dot_pct.to_frame(name='Dot Ball %'))
+
+        # Visualisation
+        fig , ax = plt.subplots(figsize=(13, 7))
+        sns.set_style("ticks")
+        sns.barplot(x=qualified_dot_pct.values, y=qualified_dot_pct.index, palette='crest', hue=qualified_dot_pct.index)
+
+        for i, value in enumerate(qualified_dot_pct.values):
+            plt.text(
+                value + 0.2,
+                i,
+                f'{value:.1f}%',
+                va='center'
+            )
+
+        ax.set_title('Highest Dot Ball Percentage (Minimum 1000 Legal Deliveries)')
+        ax.set_xlabel('Dot Ball Percentage (%)')
+        ax.set_ylabel('Bowler')
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Best Bowling average
+    elif analysis == "Best Bowling Average":
+        # Wickets credited to the bowler
+        bowler_wickets = (wickets_data.groupby('bowler').size())
+        runs_conceded = deliveries.groupby('bowler')['bowler_runs'].sum()  # Ignore
+        bowling_average = (runs_conceded / bowler_wickets).round(2)
+
+        MIN_WICKETS = 30
+
+        qualified_average = (
+            bowling_average.loc[bowler_wickets[bowler_wickets >= MIN_WICKETS].index]
+            .drop('R Sharma', errors='ignore').sort_values().head(10))
+
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(13, 7))
+
+        sns.barplot(x=qualified_average.values, y=qualified_average.index, palette='flare', hue=qualified_average.index)
+
+        for i, value in enumerate(qualified_average.values): plt.text(value + 0.2, i, f'{value:.2f}', va='center')
+
+        ax.set_title('Best Bowling Average (Minimum 20 Wickets)')
+        ax.set_xlabel('Runs per Wicket')
+        ax.set_ylabel('Bowler')
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Dismissal types
+    elif analysis == "Dismissal Types":
+
+        dismissal_counts = deliveries['dismissal_kind'].value_counts()
+        dismissal_percentage = (dismissal_counts / dismissal_counts.sum() * 100).round(1)
+
+        # Categories contributing less than 1%
+        threshold = 1
+        others = dismissal_percentage[dismissal_percentage < threshold].sum()
+        dismissal_percentage = dismissal_percentage[dismissal_percentage >= threshold]
+        dismissal_percentage['Others'] = others
+        dismissal_percentage = dismissal_percentage.round(1)
+        '''dismissal_percentage'''
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(10, 6))
+        colors = sns.color_palette('Spectral')[0:len(dismissal_percentage)]
+        plt.pie(dismissal_percentage, autopct='%1.1f%%', startangle=90, wedgeprops={'edgecolor': 'black'},
+                colors=colors)
+
+        plt.legend(
+            dismissal_percentage.index, title="Dismissal Type",
+            loc="center left", bbox_to_anchor=(1, 0.5))
+
+        ax.set_title('Distribution of Bowling Dismissal Types in IPL')
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
