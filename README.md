@@ -141,31 +141,36 @@ streamlit run app.py
 
 ### 🏠 Overview
 
-> *(Insert screenshot here)*
+> <img width="1916" height="944" alt="image" src="https://github.com/user-attachments/assets/35622527-385b-44cf-9a57-51f059b10294" />
+
 
 ---
 
 ### 🏆 Match Analysis
 
-> *(Insert screenshot here)*
+> <img width="1919" height="930" alt="image" src="https://github.com/user-attachments/assets/62e8476e-c3fa-46ed-8a3d-dfb698bc10ec" />
+
 
 ---
 
 ### 🏏 Batting Analysis
 
-> *(Insert screenshot here)*
+> <img width="1919" height="933" alt="image" src="https://github.com/user-attachments/assets/a8201507-7fb0-47bd-a8b4-4f09b6249dc5" />
+
 
 ---
 
 ### 🎯 Bowling Analysis
 
-> *(Insert screenshot here)*
+> <img width="1919" height="929" alt="image" src="https://github.com/user-attachments/assets/cd72dc3a-08ea-48ad-aeac-33579a3ef056" />
+
 
 ---
 
 ### 📈 Season Trends
 
-> *(Insert screenshot here)*
+> <img width="1919" height="927" alt="image" src="https://github.com/user-attachments/assets/fff88a39-40e8-46fe-8ec3-0b8322f6904d" />
+
 
 ---
 
@@ -193,9 +198,7 @@ streamlit run app.py
 
 **Parth**
 
-GitHub: https://github.com/<your-username>
-
-LinkedIn: https://linkedin.com/in/<your-linkedin>
+GitHub: https://github.com/<parthlamba-glitch>
 
 ---
 
