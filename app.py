@@ -706,6 +706,64 @@ elif page == "🎯 Bowling Analysis":
         plt.tight_layout()
         st.pyplot(fig)
 
+    #Powerplay vs Death
+    elif analysis == "Powerplay vs Death Economy":
+        # Powerplay (Overs 1-6)
+        powerplay = deliveries[(deliveries['over'] <= 5) & (deliveries['extras_type'] != 'wides')
+                             & (deliveries['bowler'] != 'R Sharma')].copy()
+
+        # Death Overs (Overs 17-20)
+        death = deliveries[(deliveries['over'] >= 16) & (deliveries['extras_type'] != 'wides')
+                         & (deliveries['bowler'] != 'R Sharma')].copy()
+
+        # Runs conceded
+        for df in [powerplay, death]:
+            df['bowler_runs'] = df['batsman_runs']
+            mask = df['extras_type'].isin(['wides', 'noballs'])
+            df.loc[mask, 'bowler_runs'] += df.loc[mask, 'extra_runs']
+
+        # Economy calculation
+        # Powerplay
+        pp_runs = powerplay.groupby('bowler')['bowler_runs'].sum()
+        pp_balls = powerplay.groupby('bowler').size()
+        pp_economy = (pp_runs / pp_balls * 6)
+
+        # Death
+        death_runs = death.groupby('bowler')['bowler_runs'].sum()
+        death_balls = death.groupby('bowler').size()
+        death_economy = (death_runs / death_balls * 6)
+
+        # Qualification & Combine
+        MIN_BALLS = 200
+
+        pp_economy = pp_economy[pp_balls >= MIN_BALLS]
+        death_economy = death_economy[death_balls >= MIN_BALLS]
+
+        phase_comparison = pd.DataFrame({
+            'Powerplay Economy': pp_economy,
+            'Death Economy': death_economy
+        }).dropna()
+        '''phase_comparison = phase_comparison.head(30).sort_values(["Death Economy", "Powerplay Economy"])
+        display(phase_comparison)'''
+        # ----------------------------------------------------------------------------------------------------------------------------
+        # Visualisation
+
+        fig, ax = plt.subplots(figsize=(8, 7))
+        sns.scatterplot(data=phase_comparison, x='Powerplay Economy', y='Death Economy', s=75)
+
+        # Label each point
+        for bowler, row in phase_comparison.iterrows():
+            plt.text(row['Powerplay Economy'] + 0.03, row['Death Economy'] + 0.03, bowler, fontsize=8)
+
+        ax.set_xlabel('Powerplay Economy')
+        ax.set_ylabel('Death Overs Economy')
+        ax.set_title('Powerplay vs Death Overs Economy')
+
+        plt.grid(alpha=0.3)
+        plt.tight_layout()
+
+        st.pyplot(fig)
+
 # =====================================================
 # SEASON TRENDS
 # =====================================================
