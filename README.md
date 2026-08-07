@@ -182,15 +182,6 @@ streamlit run app.py
 - Modern IPL cricket relies more heavily on boundary scoring than earlier seasons.
 - Bowling performance varies noticeably across different phases of an innings.
 
----
-
-## 📌 Future Improvements
-
-- Player vs Player comparison
-- Venue-wise dashboards
-- Predictive analytics using Machine Learning
-- Win probability visualizations
-- Advanced filtering and search options
 
 ---
 
