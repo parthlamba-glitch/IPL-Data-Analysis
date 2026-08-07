@@ -130,16 +130,17 @@ if selected_team != "All":
         (filtered_merged["batting_team"] == selected_team) |
         (filtered_merged["bowling_team"] == selected_team)
     ]
+DEBUG = False
+if DEBUG:
+    with st.expander("🔧 Debug: View Filtered Data"):
+        st.write("Filtered Matches")
+        st.dataframe(filtered_matches)
 
-with st.expander("🔧 Debug: View Filtered Data"):
-    st.write("Filtered Matches")
-    st.dataframe(filtered_matches)
+        st.write("Filtered Deliveries")
+        st.dataframe(filtered_deliveries)
 
-    st.write("Filtered Deliveries")
-    st.dataframe(filtered_deliveries)
-
-    st.write("Filtered Merged Data")
-    st.dataframe(filtered_merged)
+        st.write("Filtered Merged Data")
+        st.dataframe(filtered_merged)
 
 #Block 3
 # =====================================================
@@ -157,6 +158,9 @@ if page == "🏠 Overview":
     """)
 
     st.divider()
+    st.caption(
+        "🏏 IPL Data Analysis Dashboard | Built with Python, Pandas, Matplotlib, Seaborn & Streamlit"
+    )
 
 #KPI Cards
     col1, col2, col3, col4 = st.columns(4)
@@ -258,6 +262,11 @@ if page == "🏠 Overview":
 elif page == "🏟️ Match Analysis":
     valid = filtered_matches[filtered_matches['winner'].notna()].copy()
     st.title("🏟️ Match Analysis")
+    st.markdown("""
+        Analyze team performances across IPL history through win distributions,
+        toss impact, venue-based trends, and victory margins.
+        Discover how match outcomes vary across different conditions.
+        """)
 
     analysis = st.selectbox(
         "Select Analysis",
@@ -270,6 +279,9 @@ elif page == "🏟️ Match Analysis":
     )
 
     st.divider()
+    st.caption(
+        "🏏 IPL Data Analysis Dashboard | Built with Python, Pandas, Matplotlib, Seaborn & Streamlit"
+    )
 #Option 1
     if analysis == "Team Wins":
 
@@ -387,8 +399,16 @@ elif page == "🏏 Batting Analysis":
             "Batting Consistency"
         ]
     )
+    st.markdown("""
+    Explore the performances of IPL's leading batters.
+    Compare career statistics, strike rates, scoring patterns,
+    and performance across different phases of an innings.
+    """)
 
     st.divider()
+    st.caption(
+        "🏏 IPL Data Analysis Dashboard | Built with Python, Pandas, Matplotlib, Seaborn & Streamlit"
+    )
 
     runs = deliveries.groupby('batter')['batsman_runs'].sum().sort_values(ascending=False).head(10)
     #Top run scorers
@@ -517,6 +537,11 @@ elif page == "🎯 Bowling Analysis":
             "Powerplay vs Death Economy"
         ]
     )
+    st.markdown("""
+    Analyze the league's top bowlers through wickets,
+    economy rates, bowling averages, strike rates,
+    and other key performance indicators.
+    """)
 
     st.divider()
     legal_deliveries = deliveries[deliveries['extras_type'] != 'wides'] #Ignore
@@ -524,6 +549,10 @@ elif page == "🎯 Bowling Analysis":
     non_bowler_dismissals = ['run out', 'retired hurt', 'obstructing the field', 'retired out'] #Ignore
     wickets_data = deliveries[
         (deliveries['is_wicket'] == 1) & (~deliveries['dismissal_kind'].isin(non_bowler_dismissals))] #Ignore
+    deliveries['bowler_runs'] = deliveries['batsman_runs']
+
+    deliveries.loc[deliveries['extras_type'].isin(['wides', 'noballs']), 'bowler_runs'] \
+        += deliveries.loc[deliveries['extras_type'].isin(['wides', 'noballs']), 'extra_runs']
 
     #Top wicket takers
     if analysis == "Top Wicket Takers":
@@ -626,7 +655,7 @@ elif page == "🎯 Bowling Analysis":
     elif analysis == "Best Bowling Average":
         # Wickets credited to the bowler
         bowler_wickets = (wickets_data.groupby('bowler').size())
-        runs_conceded = deliveries.groupby('bowler')['bowler_runs'].sum()  # Ignore
+        runs_conceded = deliveries.groupby('bowler')['bowler_runs'].sum()
         bowling_average = (runs_conceded / bowler_wickets).round(2)
 
         MIN_WICKETS = 30
@@ -695,8 +724,15 @@ elif page == "📈 Season Trends":
             "Batting First vs Chasing"
         ]
     )
+    st.markdown("""
+    Track how the IPL has evolved over time by exploring season-wise scoring trends,
+    batting aggression, toss influence, and changes in match dynamics from 2008 to 2024.
+    """)
 
     st.divider()
+    st.caption(
+        "🏏 IPL Data Analysis Dashboard | Built with Python, Pandas, Matplotlib, Seaborn & Streamlit"
+    )
     merged_full = deliveries.merge(
         matches[['id', 'season']], left_on='match_id', right_on='id'
     )
