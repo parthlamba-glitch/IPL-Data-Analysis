@@ -2,7 +2,7 @@
 
 An interactive data analysis dashboard exploring the evolution of the Indian Premier League (IPL) from **2008 to 2024** using ball-by-ball match data. The project combines exploratory data analysis with an interactive Streamlit dashboard to uncover insights into team performance, batting, bowling, and season-wise trends.
 
-🔗 **Live Dashboard:** *Coming Soon*  
+🔗 **Live Dashboard:** *https://itriedsomething.streamlit.app/*  
 > 
 
 ---
@@ -114,7 +114,7 @@ IPL-Data-Analysis/
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/<your-username>/IPL-Data-Analysis.git
+git clone https://github.com/parthlamba-glitch/IPL-Data-Analysis.git
 ```
 
 ### 2. Navigate to the project directory

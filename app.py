@@ -743,8 +743,6 @@ elif page == "🎯 Bowling Analysis":
             'Powerplay Economy': pp_economy,
             'Death Economy': death_economy
         }).dropna()
-        '''phase_comparison = phase_comparison.head(30).sort_values(["Death Economy", "Powerplay Economy"])
-        display(phase_comparison)'''
         # ----------------------------------------------------------------------------------------------------------------------------
         # Visualisation
 
