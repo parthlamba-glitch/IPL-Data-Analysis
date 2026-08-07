@@ -677,3 +677,150 @@ elif page == "🎯 Bowling Analysis":
         plt.tight_layout()
         st.pyplot(fig)
 
+# =====================================================
+# SEASON TRENDS
+# =====================================================
+
+elif page == "📈 Season Trends":
+
+    st.title("📈 Season Trends")
+
+    analysis = st.selectbox(
+        "Select Analysis",
+        [
+            "Powerplay Scoring Evolution",
+            "Average First Innings Score",
+            "Boundary Percentage",
+            "Toss Impact Over Time",
+            "Batting First vs Chasing"
+        ]
+    )
+
+    st.divider()
+    merged_full = deliveries.merge(
+        matches[['id', 'season']], left_on='match_id', right_on='id'
+    )
+    #Powerplay Scoring Evolution
+    if analysis == "Powerplay Scoring Evolution":
+        powerplay = merged_full[merged_full['over'] <= 5]
+        pp_innings = (
+            powerplay.groupby(['season', 'match_id', 'inning'])['total_runs'].sum().reset_index(name='powerplay_runs'))
+
+        pp_by_season = (pp_innings.groupby('season')['powerplay_runs'].mean().round(2))
+        pp_run_rate = (pp_by_season / 6).round(2)
+
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(12, 6))
+        sns.lineplot(x=pp_run_rate.index, y=pp_run_rate.values, marker='o', linewidth=2.5)
+
+        ax.set_title('Average Powerplay Run Rate by Season')
+        ax.set_xlabel('Season')
+        ax.set_ylabel('Runs per Over')
+        ax.set_xticks(pp_run_rate.index)
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Average First Innings Score
+    elif analysis == "Average First Innings Score":
+        first_innings = (deliveries[deliveries['inning'] == 1].groupby('match_id')['total_runs'].sum().reset_index(
+            name='first_innings_score'))
+        first_innings = first_innings.merge(matches[['id', 'season']], left_on='match_id', right_on='id')
+        avg_score = (first_innings.groupby('season')['first_innings_score'].mean().round(1))
+
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(12, 6))
+        plt.plot(avg_score.index, avg_score.values, color='lightblue', linewidth=3)
+        plt.scatter(avg_score.index[:-1], avg_score.values[:-1], s=60, color='blue')
+        plt.scatter(avg_score.index[-1], avg_score.values[-1], s=180, color='red', zorder=5)
+        ax.set_title('Average First Innings Score by Season')
+        st.pyplot(fig)
+
+    #Boundary Percentage
+    elif analysis == "Boundary Percentage":
+        # Exclude wides as they are not legal deliveries
+        legal_deliveries = merged_full[merged_full['extras_type'] != 'wides']
+
+        # Deliveries that resulted in a boundary
+        boundary_balls = legal_deliveries[legal_deliveries['batsman_runs'].isin([4, 6])]
+
+        # Percentage of legal deliveries that were boundaries
+        boundary_pct = (
+                boundary_balls.groupby('season').size()
+                / legal_deliveries.groupby('season').size() * 100).round(2)
+        # ---------------------------------------------------------------
+        # Visualisation
+
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        plt.plot(boundary_pct.index, boundary_pct.values, linewidth=2.8, marker='D', markersize=7)
+        plt.fill_between(boundary_pct.index, boundary_pct.values, alpha=0.15)
+
+        ax.set_title('Boundary Percentage by Season', fontsize=16, weight='bold')
+        ax.set_xlabel('Season')
+        ax.set_ylabel('Boundary Balls (%)')
+
+        ax.set_xticks(boundary_pct.index)
+
+        plt.grid(axis='y', alpha=0.3)
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Toss Impact Over time
+    elif analysis == "Toss Impact Over Time":
+        # Exclude matches with no result
+        valid_matches = matches[matches['winner'].notna()].copy()
+        # Check if the toss winner also won the match
+        valid_matches['toss_won_match'] = (valid_matches['toss_winner'] == valid_matches['winner'])
+
+        # Calculate season-wise percentage
+        toss_impact = (valid_matches.groupby('season')['toss_won_match'].mean().mul(100).round(1))
+        # --------------------------------------------------------------------------------------
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        plt.plot(toss_impact.index, toss_impact.values, linewidth=2.5, marker='o', markersize=7)
+
+        # Benchmark: 50% means toss provides no clear advantage
+        plt.axhline(50, linestyle='--', linewidth=1.5, alpha=0.7, label='50% (No Clear Toss Advantage)')
+
+        # Highlight the latest season
+        plt.scatter(toss_impact.index[-1], toss_impact.values[-1], s=120, zorder=5, label='2024')
+
+        ax.set_title('Toss Winner Also Won the Match (%) by Season', fontsize=16, weight='bold')
+        ax.set_xlabel('Season')
+        ax.set_ylabel('Percentage (%)')
+
+        ax.set_xticks(toss_impact.index)
+        plt.legend()
+
+        plt.tight_layout()
+        st.pyplot(fig)
+
+    #Batting First vs Chasing
+    elif analysis == "Batting First vs Chasing":
+        # Exclude matches with no result
+        valid_matches = matches[matches['winner'].notna()].copy()
+
+        # Identify whether the winner batted first
+        valid_matches['batting_first_won'] = (
+                valid_matches['winner'] == valid_matches['team1']
+        )
+        batting_first = (valid_matches.groupby('season')['batting_first_won'].mean().mul(100).round(1))
+        chasing = (100 - batting_first).round(1)
+        # -----------------------------------------------------------------------------------
+        # Visualisation
+        fig, ax = plt.subplots(figsize=(12, 6))
+
+        plt.plot(batting_first.index, batting_first.values, marker='o', linewidth=2.5, label='Batting First')
+        plt.plot(chasing.index, chasing.values, marker='s', linewidth=2.5, label='Chasing')
+        plt.axhline(50, linestyle='--', alpha=0.5)
+        ax.set_title('Batting First vs Chasing Win Percentage by Season', fontsize=16, weight='bold')
+        ax.set_xlabel('Season')
+        ax.set_ylabel('Win Percentage (%)')
+
+        plt.legend()
+
+        plt.tight_layout()
+        st.pyplot(fig)
