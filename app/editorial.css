@@ -1,18 +1,11 @@
-:root {
-  --bg: #111615;
-  --side: #151a19;
-  --card: #191f1d;
-  --line: #303936;
-  --text: #f0f0e9;
-  --muted: #a7b0a9;
-  --gold: #d7ae6a;
-  --teal: #84adb1;
+html {
+  color-scheme: light;
 }
 body {
   line-height: 1.5;
 }
 :focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
 .sidebar {
@@ -32,9 +25,9 @@ body {
   width: 38px;
   height: 38px;
   border-radius: 3px;
-  border: 1px solid var(--gold);
+  border: 1px solid var(--accent);
   background: transparent;
-  color: var(--gold);
+  color: var(--accent);
   font:
     700 12px "DM Sans",
     sans-serif;
@@ -71,7 +64,7 @@ body {
 .nav-item.active {
   background: #252f29;
   color: var(--text);
-  box-shadow: inset 2px 0 var(--gold);
+  box-shadow: inset 2px 0 var(--accent);
   font-weight: 700;
 }
 .sidebar-foot {
@@ -130,7 +123,7 @@ body {
 }
 .eyebrow,
 .section-kicker {
-  color: var(--gold);
+  color: var(--accent);
   font-size: 10px;
   letter-spacing: 0.15em;
   font-weight: 700;
@@ -144,7 +137,7 @@ body {
   color: #c1cabe;
 }
 .intro-badge span {
-  color: var(--gold);
+  color: var(--accent);
   padding: 0 5px;
 }
 .filters {
@@ -193,7 +186,7 @@ body {
   border-color: #84948a;
 }
 .clear {
-  color: var(--gold);
+  color: var(--accent);
   margin-bottom: 9px;
   white-space: nowrap;
 }
@@ -292,10 +285,10 @@ body {
   background: #343e37;
 }
 .track i {
-  background: var(--gold);
+  background: var(--accent);
 }
 .track.blue i {
-  background: var(--teal);
+  background: var(--chart-secondary);
 }
 .performers {
   gap: 30px;
@@ -320,7 +313,7 @@ body {
 }
 .explore-links > span {
   margin-right: auto;
-  color: var(--gold);
+  color: var(--accent);
   font-size: 10px;
   letter-spacing: 0.15em;
   font-weight: 700;
@@ -336,7 +329,7 @@ body {
   font-weight: 600;
 }
 .explore-links a:hover {
-  color: var(--gold);
+  color: var(--accent);
   background: #202822;
 }
 .table-wrap {
@@ -375,7 +368,7 @@ body {
   cursor: pointer;
 }
 .table-wrap tr.clickable:focus-visible {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: -2px;
   background: #253329;
 }
@@ -464,7 +457,7 @@ body {
 }
 .season-card.selected {
   background: #252f29;
-  box-shadow: inset 0 2px var(--gold);
+  box-shadow: inset 0 2px var(--accent);
 }
 .compare-controls {
   display: grid;
@@ -541,7 +534,7 @@ body {
 .player-list button.selected {
   background: #202923;
   border-color: var(--line);
-  color: var(--gold);
+  color: var(--accent);
 }
 .method-grid {
   grid-template-columns: 1fr;
@@ -580,7 +573,7 @@ body {
   padding: 52px 0 70px;
 }
 .empty-state span {
-  color: var(--gold);
+  color: var(--accent);
   font-size: 10px;
   letter-spacing: 0.16em;
 }
@@ -601,7 +594,7 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 10px;
-  background: var(--gold);
+  background: var(--accent);
   color: #161c17;
   border: 0;
   border-radius: 3px;
@@ -771,8 +764,8 @@ body {
     min-width: 0;
   }
   .mobile-nav a.active {
-    color: var(--gold);
-    border-top: 2px solid var(--gold);
+    color: var(--accent);
+    border-top: 2px solid var(--accent);
   }
   .mobile-nav a:focus-visible,
   .mobile-nav button:focus-visible {
@@ -808,5 +801,248 @@ body {
   }
   .explore-links a {
     padding: 0 8px;
+  }
+}
+
+/* A quiet, single-accent editorial palette. */
+.sidebar,
+.topbar,
+.mobile-nav {
+  background: var(--background);
+}
+.sidebar {
+  border-right-color: var(--border);
+}
+.brand-mark {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--text-primary);
+}
+.brand small,
+.nav-label,
+.sidebar-foot,
+.sidebar-foot small,
+.crumb,
+.edition,
+.eyebrow,
+.section-kicker,
+.explore-links > span,
+.empty-state span {
+  color: var(--text-muted);
+}
+.nav-item,
+.mobile-nav a,
+.mobile-nav button {
+  color: var(--text-secondary);
+}
+.nav-item:hover,
+.mobile-nav a:hover,
+.mobile-nav button:hover {
+  background: var(--surface-muted);
+}
+.nav-item.active {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  box-shadow: inset 2px 0 var(--accent);
+}
+.nav-item.active svg:first-child {
+  color: var(--accent);
+}
+.sidebar-foot,
+.topbar,
+.mobile-nav {
+  border-color: var(--border);
+}
+.live-dot {
+  background: var(--success);
+  box-shadow: none;
+}
+.avatar {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+}
+.page-intro p,
+.intro-badge,
+.filter-title,
+.filters label,
+.stat > span,
+.stat small,
+.panel-head p,
+.outcomes small,
+.outcomes p,
+.performers h4,
+.performer em,
+.performer span small,
+.table-note,
+.section-heading p,
+.season-card small,
+.compare-controls label,
+.comparison > div > div,
+.player-list button small,
+.method p,
+.empty-state p,
+.error p,
+.modal > p,
+.match-meta p,
+.innings span,
+footer {
+  color: var(--text-secondary);
+}
+.filter-title small,
+.match-teams span,
+.muted {
+  color: var(--text-muted);
+}
+.intro-badge span {
+  color: var(--text-secondary);
+}
+.filters select,
+.filters input[type="date"],
+.compare-select,
+.search,
+.inline-control input {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--text-primary);
+  color-scheme: light;
+}
+.search input {
+  color: var(--text-primary);
+}
+.filters select:hover,
+.compare-select:hover {
+  border-color: var(--text-secondary);
+}
+.clear {
+  color: var(--text-secondary);
+}
+.clear:hover,
+.explore-links a:hover {
+  color: var(--accent-hover);
+}
+.stat strong,
+.outcome-head b,
+.performer strong,
+.comparison strong,
+.match-teams,
+.season-card strong,
+.innings strong {
+  color: var(--text-primary);
+}
+.track {
+  background: var(--surface-muted);
+}
+.track i {
+  background: var(--chart-neutral);
+}
+.track.blue i {
+  background: var(--chart-secondary);
+}
+.performer,
+.comparison > div > div,
+.table-wrap td {
+  border-color: var(--border);
+}
+.table-wrap {
+  scrollbar-color: var(--border) transparent;
+}
+.table-wrap th {
+  background: var(--background);
+  color: var(--text-secondary);
+  border-color: var(--border);
+}
+.table-wrap td {
+  color: var(--text-primary);
+}
+.table-wrap td strong,
+.match-meta b {
+  color: var(--text-primary);
+}
+.table-wrap tr:hover,
+.player-list button:hover,
+.season-card:hover {
+  background: var(--surface-muted);
+}
+.table-wrap tr.clickable:focus-visible {
+  outline-color: var(--accent);
+  background: var(--surface-muted);
+}
+.season-card {
+  color: var(--text-primary);
+}
+.season-card span {
+  color: var(--text-secondary);
+}
+.season-card.selected {
+  background: var(--surface-muted);
+  box-shadow: inset 0 2px var(--accent);
+}
+.player-list button {
+  color: var(--text-primary);
+}
+.player-list button.selected {
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  box-shadow: inset 2px 0 var(--accent);
+}
+.method > span {
+  color: var(--text-muted);
+}
+.empty-state button,
+.error button {
+  background: var(--accent);
+  color: var(--surface);
+}
+.empty-state button:hover,
+.error button:hover {
+  background: var(--accent-hover);
+}
+.error {
+  border-color: var(--border);
+  background: var(--surface);
+}
+.skeleton {
+  background: var(--surface-muted);
+  animation: none;
+}
+.modal {
+  background: var(--surface);
+  border-color: var(--border);
+  box-shadow: 0 24px 60px #17171420;
+}
+.modal-close,
+.icon-button {
+  color: var(--text-primary);
+}
+.modal h2 span,
+.match-meta b {
+  color: var(--text-secondary);
+}
+.match-result {
+  color: var(--text-primary);
+}
+.empty {
+  color: var(--text-secondary);
+}
+.modal h2 {
+  color: var(--text-primary);
+}
+.innings > div {
+  background: var(--surface-muted);
+}
+.match-meta p {
+  border-color: var(--border);
+}
+footer span {
+  color: var(--text-muted);
+}
+.scrim,
+.modal-backdrop {
+  background: #17171488;
+}
+@media (max-width: 760px) {
+  .mobile-nav a.active {
+    color: var(--text-primary);
+    border-top-color: var(--accent);
   }
 }
