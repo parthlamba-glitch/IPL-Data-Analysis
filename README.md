@@ -1,196 +1,64 @@
-# 🏏 IPL Data Analysis Dashboard
+# IPL Analytics
 
-An interactive data analysis dashboard exploring the evolution of the Indian Premier League (IPL) from **2008 to 2024** using ball-by-ball match data. The project combines exploratory data analysis with an interactive Streamlit dashboard to uncover insights into team performance, batting, bowling, and season-wise trends.
+A responsive IPL analytics application built with Next.js, React, TypeScript, Recharts, and a validated data preparation pipeline. It covers **1,095 matches and 260,920 deliveries from 2008–2024**.
 
-🔗 **Live Dashboard:** *https://itriedsomething.streamlit.app/*  
-> 
+## Quick start
 
----
+Requires Node.js 20.9 or newer. The prepared production data is checked in, so Python is only needed when rebuilding it from the CSVs.
 
-## 📌 Project Overview
+```bash
+npm install
+npm run dev
+```
 
-This project analyzes over 16 seasons of IPL cricket using match-level and ball-by-ball datasets. The objective is to transform raw cricket data into meaningful insights through statistical analysis and interactive visualizations.
+Open the URL printed by Next.js. To verify a production build:
 
-The project consists of:
+```bash
+npm run build
+npm run start
+```
 
-- 📓 Five Jupyter notebooks documenting the complete analysis
-- 📊 An interactive Streamlit dashboard
-- 📈 Professional visualizations using Matplotlib and Seaborn
+No environment variables, localhost endpoints, external database, or Windows-specific paths are required. The site loads its own `/api/analytics` route.
 
----
-
-## ✨ Dashboard Features
-
-### 🏠 Overview
-- Key tournament statistics
-- Team wins overview
-- Toss decision distribution
-
-### 🏆 Match Analysis
-- Team-wise win distribution
-- Toss impact on match results
-- Venue-wise toss decisions
-- Win margin distributions
-- Player of the Match analysis
-
-### 🏏 Batting Analysis
-- Top run scorers
-- Strike rate leaders
-- Death-over specialists
-- Batting consistency analysis
-
-### 🎯 Bowling Analysis
-- Top wicket takers
-- Economy rate leaders
-- Bowling average
-- Bowling strike rate
-- Dot ball specialists
-- Dismissal type analysis
-- Powerplay vs Death-over economy comparison
-
-### 📈 Season Trends
-- Powerplay scoring evolution
-- Average first innings score
-- Boundary percentage over seasons
-- Toss impact across seasons
-- Batting first vs chasing success
-
----
-
-## 📊 Dataset
-
-**Source:** Kaggle IPL Dataset (2008–2024)
-
-The project uses three datasets:
-
-| File | Description |
-|------|-------------|
-| `matches.csv` | Match-level information |
-| `deliveries.csv` | Ball-by-ball data |
-| `merged_data.csv` | Combined dataset used for analysis |
-
----
-
-## 🛠️ Tech Stack
-
-- Python
-- Pandas
-- NumPy
-- Matplotlib
-- Seaborn
-- Streamlit
-
----
-
-## 📁 Project Structure
+## Architecture
 
 ```text
-IPL-Data-Analysis/
-│
-├── Resources/
-│   ├── matches.csv
-│   ├── deliveries.csv
-│   ├── merged_data.csv
-│   └── corrected_data.csv
-│
-├── notebooks/
-│   ├── 1_data_cleaning.ipynb
-│   ├── 2_match_analysis.ipynb
-│   ├── 3_batting_analysis.ipynb
-│   ├── 4_bowling_analysis.ipynb
-│   └── 5_season_trends.ipynb
-│
-├── charts/
-│
-├── app.py
-├── requirements.txt
-└── README.md
+Resources/*.csv              Source match and delivery data
+scripts/prepare_data.py      Normalize, validate, and aggregate once
+data/ipl.json                Prepared match-level analytics (committed)
+lib/analytics.ts             Central filtered query and derived statistics
+app/api/analytics/route.ts   Cached server-side analytics endpoint
+components/dashboard.tsx     Responsive charts, filters, tables, and explorer
+app/[section]/page.tsx       Matches, batting, bowling, teams, seasons,
+                            players, and methodology routes
 ```
 
----
+The server reads the compact prepared data once per process. Filters are applied centrally before KPIs and charts are derived. Raw ball-by-ball data is never sent to the browser. The dashboard and all pages share season, team, player, and venue filters. Match results can also be filtered on the match page.
 
-## 🚀 Getting Started
+## Rebuild data
 
-### 1. Clone the repository
+Python 3.10+ standard library is sufficient:
 
 ```bash
-git clone https://github.com/parthlamba-glitch/IPL-Data-Analysis.git
+python scripts/prepare_data.py
 ```
 
-### 2. Navigate to the project directory
+The script reads `Resources/corrected_data.csv` and `Resources/deliveries.csv`, validates row counts, IDs, unique delivery keys, season coverage, team joins, innings, and run arithmetic, then writes `data/ipl.json`. It verifies that `Resources/merged_data.csv` has the expected row count. The production app uses the prepared JSON and does not require the CSV files at runtime.
 
-```bash
-cd IPL-Data-Analysis
-```
+Season is derived from the match date to correct source labels such as `2007/08` and `2009/10`. Historical team aliases are mapped to canonical franchise names. Batting-first results use the actual first innings. Bowling economy includes wides and no-balls as runs but excludes both from legal balls.
 
-### 3. Install dependencies
+## Vercel deployment
 
-```bash
-pip install -r requirements.txt
-```
+1. Push this repository, including `data/ipl.json`, to GitHub.
+2. Import it into Vercel as a **Next.js** project with the repository root as the root directory.
+3. Use the default `npm install` install command and `npm run build` build command.
+4. No environment variables or custom Vercel configuration are needed.
+5. Deploy. The API route and static pages are included in the same deployment.
 
-### 4. Run the Streamlit dashboard
+If the source CSVs change, run `python scripts/prepare_data.py`, review the validation output, and commit the updated `data/ipl.json` before deploying.
 
-```bash
-streamlit run app.py
-```
+## Data and limitations
 
----
+The dataset is a fixed snapshot ending in 2024. Team renames are combined under current canonical names for analysis; this does not preserve historical branding on charts. Super-over deliveries appear in delivery totals where the source includes them. Batting averages use runs divided by recorded dismissals. Bowling wickets exclude run-outs and non-bowler dismissals. The match page displays the latest 100 results after filtering; its search operates on the filtered match list. See the in-app Methodology page for details.
 
-## 📷 Dashboard Preview
-
-### 🏠 Overview
-
-> <img width="1916" height="944" alt="image" src="https://github.com/user-attachments/assets/35622527-385b-44cf-9a57-51f059b10294" />
-
-
----
-
-### 🏆 Match Analysis
-
-> <img width="1919" height="930" alt="image" src="https://github.com/user-attachments/assets/62e8476e-c3fa-46ed-8a3d-dfb698bc10ec" />
-
-
----
-
-### 🏏 Batting Analysis
-
-> <img width="1919" height="933" alt="image" src="https://github.com/user-attachments/assets/a8201507-7fb0-47bd-a8b4-4f09b6249dc5" />
-
-
----
-
-### 🎯 Bowling Analysis
-
-> <img width="1919" height="929" alt="image" src="https://github.com/user-attachments/assets/cd72dc3a-08ea-48ad-aeac-33579a3ef056" />
-
-
----
-
-### 📈 Season Trends
-
-> <img width="1919" height="927" alt="image" src="https://github.com/user-attachments/assets/fff88a39-40e8-46fe-8ec3-0b8322f6904d" />
-
-
----
-
-## 🔍 Key Insights
-
-- Batting aggression has steadily increased across IPL seasons.
-- Average first innings scores have risen significantly over time.
-- Toss decisions vary considerably across venues.
-- Modern IPL cricket relies more heavily on boundary scoring than earlier seasons.
-- Bowling performance varies noticeably across different phases of an innings.
-
-
----
-
-## 👨‍💻 Author
-
-**Parth**
-
-GitHub: https://github.com/parthlamba-glitch
-
----
-
-## ⭐ If you found this project interesting, consider giving it a star!
+The source Streamlit implementation remains in `app.py` for reference and is not used by the Vercel app. Two notebooks currently exist in `notebooks/`; other notebook files and `Resources/matches.csv` are locally deleted in the pre-existing working tree. They are not required for production. Existing deletions were left untouched.
