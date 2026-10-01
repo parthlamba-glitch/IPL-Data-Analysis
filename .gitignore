@@ -1,0 +1,8 @@
+node_modules/
+.next/
+.vercel/
+*.tsbuildinfo
+__pycache__/
+.venv/
+.idea/
+.npm-cache/
