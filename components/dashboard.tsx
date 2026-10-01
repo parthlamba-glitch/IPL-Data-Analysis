@@ -162,7 +162,7 @@ function Chart({
   kind = "bar",
   x,
   y,
-  color = "#d7ae6a",
+  color = "var(--accent)",
   height = 290,
 }: {
   data: AnyRow[];
@@ -177,14 +177,14 @@ function Chart({
   const common = [
     <CartesianGrid
       key="grid"
-      stroke="#313b34"
+      stroke="var(--border)"
       vertical={false}
       strokeDasharray="2 4"
     />,
     <XAxis
       key="x"
       dataKey={x}
-      stroke="#a5b2a5"
+      stroke="var(--text-secondary)"
       tickLine={false}
       axisLine={false}
       fontSize={12}
@@ -196,7 +196,7 @@ function Chart({
     />,
     <YAxis
       key="y"
-      stroke="#a5b2a5"
+      stroke="var(--text-secondary)"
       tickLine={false}
       axisLine={false}
       fontSize={12}
@@ -209,10 +209,10 @@ function Chart({
     <Tooltip
       key="tooltip"
       contentStyle={{
-        background: "#1a221c",
-        border: "1px solid #59675a",
+        background: "var(--surface)",
+        border: "1px solid var(--border)",
         borderRadius: 3,
-        color: "#fff",
+        color: "var(--text-primary)",
       }}
       formatter={(v) => fmt(Number(v))}
     />,
@@ -737,7 +737,7 @@ export default function Dashboard({ section }: { section: string }) {
                           .map((x) => ({ ...x, team: short(x.team) }))}
                         x="team"
                         y="wins"
-                        color="#6dabb5"
+                        color="var(--chart-neutral)"
                       />
                     </Panel>
                     <Panel
@@ -931,7 +931,7 @@ export default function Dashboard({ section }: { section: string }) {
                           .slice(0, 10)}
                         x="name"
                         y="sixes"
-                        color="#84adb1"
+                        color="var(--chart-neutral)"
                       />
                     </Panel>
                   </div>
@@ -1181,7 +1181,7 @@ export default function Dashboard({ section }: { section: string }) {
                         x="season"
                         y="wickets"
                         kind="line"
-                        color="#6dabb5"
+                        color="var(--chart-neutral)"
                       />
                     </Panel>
                   </div>
@@ -1373,7 +1373,7 @@ export default function Dashboard({ section }: { section: string }) {
                     kind="line"
                     x="season"
                     y="winPct"
-                    color="#6dabb5"
+                    color="var(--chart-neutral)"
                   />
                 </Panel>
               )}
@@ -1393,7 +1393,7 @@ export default function Dashboard({ section }: { section: string }) {
                       kind="line"
                       x="season"
                       y="wickets"
-                      color="#6dabb5"
+                      color="var(--chart-neutral)"
                     />
                   </Panel>
                 </div>

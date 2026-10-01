@@ -1,14 +1,25 @@
 @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap");
 @import "tailwindcss";
 :root {
-  --bg: #0b1117;
-  --side: #0e151c;
-  --card: #131c24;
-  --line: #28343f;
-  --text: #eef1f0;
-  --muted: #90a0ad;
-  --gold: #eab75a;
-  --teal: #74bdc3;
+  --background: #f5f3ee;
+  --surface: #ffffff;
+  --surface-muted: #eeece6;
+  --text-primary: #171714;
+  --text-secondary: #66645f;
+  --text-muted: #817e77;
+  --border: #ddd9d0;
+  --accent: #b83530;
+  --accent-hover: #922923;
+  --success: #2f6b4f;
+  --danger: #b33a32;
+  --chart-neutral: #515651;
+  --chart-secondary: #939994;
+  --bg: var(--background);
+  --side: var(--background);
+  --card: var(--surface);
+  --line: var(--border);
+  --text: var(--text-primary);
+  --muted: var(--text-secondary);
 }
 * {
   box-sizing: border-box;
@@ -66,7 +77,7 @@ a {
   place-items: center;
   border: 1px solid #906f3d;
   background: #473720;
-  color: var(--gold);
+  color: var(--accent);
   border-radius: 9px;
   width: 30px;
   height: 30px;
@@ -81,7 +92,7 @@ a {
   margin-top: 3px;
 }
 .accent {
-  color: var(--gold);
+  color: var(--accent);
 }
 .nav-label {
   font-size: 10px;
@@ -111,10 +122,10 @@ a {
   color: #fff;
 }
 .nav-item.active {
-  box-shadow: inset 3px 0 var(--gold);
+  box-shadow: inset 3px 0 var(--accent);
 }
 .nav-item.active svg:first-child {
-  color: var(--gold);
+  color: var(--accent);
 }
 .nav-arrow {
   margin-left: auto;
@@ -237,7 +248,7 @@ a {
   border-radius: 7px;
 }
 .intro-badge span {
-  color: var(--gold);
+  color: var(--accent);
   padding: 0 6px;
 }
 .filters {
@@ -288,14 +299,14 @@ a {
 .filters select:focus,
 .compare-select:focus,
 input:focus {
-  outline: 2px solid var(--gold);
+  outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 .clear {
   display: flex;
   align-items: center;
   gap: 4px;
-  color: var(--gold);
+  color: var(--accent);
   background: none;
   border: 0;
   font-size: 11px;
@@ -317,7 +328,7 @@ input:focus {
   margin-bottom: 18px;
 }
 .hero-kicker {
-  color: var(--gold);
+  color: var(--accent);
   font-size: 10px;
   letter-spacing: 0.2em;
   font-weight: 800;
@@ -328,7 +339,7 @@ input:focus {
   letter-spacing: -0.045em;
 }
 .hero h2 span {
-  color: var(--gold);
+  color: var(--accent);
 }
 .hero p {
   max-width: 500px;
@@ -444,7 +455,7 @@ input:focus {
   margin-bottom: 12px;
 }
 .outcome-head b {
-  color: var(--gold);
+  color: var(--accent);
   font: 700 18px Outfit;
 }
 .track {
@@ -456,11 +467,11 @@ input:focus {
 .track i {
   display: block;
   height: 100%;
-  background: var(--gold);
+  background: var(--accent);
   border-radius: 10px;
 }
 .track.blue i {
-  background: var(--teal);
+  background: var(--chart-secondary);
 }
 .outcomes small,
 .outcomes p {
@@ -492,7 +503,7 @@ input:focus {
 }
 .performer em {
   font-style: normal;
-  color: var(--gold);
+  color: var(--accent);
   font: 700 12px Outfit;
 }
 .performer span {
@@ -650,7 +661,7 @@ td strong {
 }
 .season-card:hover {
   transform: translateY(-3px);
-  border-color: var(--gold);
+  border-color: var(--accent);
 }
 .season-card small {
   display: block;
@@ -667,7 +678,7 @@ td strong {
 .season-card span {
   display: flex;
   justify-content: space-between;
-  color: var(--gold);
+  color: var(--accent);
   font-size: 11px;
 }
 .player-list {
@@ -691,7 +702,7 @@ td strong {
 }
 .player-list button:hover,
 .player-list button.selected {
-  border-color: var(--gold);
+  border-color: var(--accent);
   color: #fff;
 }
 .profile {
@@ -711,7 +722,7 @@ td strong {
   padding: 25px;
 }
 .method > span {
-  color: var(--gold);
+  color: var(--accent);
   font: 700 13px Outfit;
 }
 .method h3 {
@@ -733,7 +744,7 @@ footer {
   letter-spacing: 0.1em;
 }
 footer span {
-  color: var(--gold);
+  color: var(--accent);
   margin: 0 9px;
 }
 .empty {
@@ -812,7 +823,7 @@ footer span {
 }
 .match-result {
   font: 600 17px Outfit;
-  color: var(--gold);
+  color: var(--accent);
   margin: 22px 0;
 }
 .innings {
